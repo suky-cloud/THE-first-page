@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#376a57">
+  <title>按时吃药 · 0.1</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">MEDICINE REMINDER · V0.1</p>
+        <h1>今天，也要好好照顾自己。</h1>
+        <p class="subtitle">添加服药时间，页面开启时会按时弹窗提醒你。</p>
+      </div>
+      <div class="clock" aria-live="polite">
+        <strong id="current-time">--:--</strong>
+        <span id="current-date">正在读取日期</span>
+      </div>
+    </header>
+
+    <section class="card form-card" aria-labelledby="form-title">
+      <div class="section-heading">
+        <div>
+          <p class="step">新提醒</p>
+          <h2 id="form-title">今天要吃什么药？</h2>
+        </div>
+        <button id="notification-button" class="text-button" type="button">开启系统通知</button>
+      </div>
+
+      <form id="reminder-form">
+        <label>
+          药品名称
+          <input id="medicine-name" name="medicine" type="text" maxlength="40" placeholder="例如：维生素 C" required>
+        </label>
+        <label>
+          提醒时间
+          <input id="medicine-time" name="time" type="time" required>
+        </label>
+        <label class="wide-field">
+          备注（可选）
+          <input id="medicine-note" name="note" type="text" maxlength="60" placeholder="例如：饭后 1 粒">
+        </label>
+        <button class="primary-button" type="submit">添加提醒</button>
+      </form>
+      <p id="form-message" class="form-message" aria-live="polite"></p>
+    </section>
+
+    <section class="reminders-section" aria-labelledby="reminders-title">
+      <div class="section-heading">
+        <div>
+          <p class="step">今日计划</p>
+          <h2 id="reminders-title">服药提醒</h2>
+        </div>
+        <span id="reminder-count" class="count-pill">0 项</span>
+      </div>
+      <div id="reminder-list" class="reminder-list"></div>
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">✓</div>
+        <h3>还没有提醒</h3>
+        <p>在上方添加第一条服药计划吧。</p>
+      </div>
+    </section>
+
+    <footer>数据只保存在当前浏览器中 · 请勿用本应用替代医生建议</footer>
+  </main>
+
+  <dialog id="reminder-dialog">
+    <div class="dialog-content">
+      <div class="dialog-icon">💊</div>
+      <p class="step">到时间了</p>
+      <h2 id="dialog-title">该吃药啦</h2>
+      <p id="dialog-note"></p>
+      <div class="dialog-actions">
+        <button id="taken-button" class="primary-button" type="button">我已服用</button>
+        <button id="later-button" class="secondary-button" type="button">5 分钟后提醒</button>
+      </div>
+    </div>
+  </dialog>
+
+  <template id="reminder-template">
+    <article class="reminder-item">
+      <div class="time-badge"></div>
+      <div class="reminder-copy">
+        <h3></h3>
+        <p></p>
+      </div>
+      <span class="status-badge">待服用</span>
+      <button class="delete-button" type="button" aria-label="删除提醒">删除</button>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
