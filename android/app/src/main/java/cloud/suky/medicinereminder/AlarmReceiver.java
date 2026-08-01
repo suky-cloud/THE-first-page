@@ -14,13 +14,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override public void onReceive(Context context, Intent intent) {
         String id = intent.getStringExtra("reminder_id");
+        String scheduledTime = intent.getStringExtra("scheduled_time");
         Reminder reminder = ReminderStore.find(context, id);
         if (reminder == null || !reminder.enabled) return;
+        if (scheduledTime == null) scheduledTime = reminder.times.get(0);
         createChannel(context);
         boolean privateMode = ReminderStore.privateNotifications(context);
 
-        PendingIntent taken = action(context, reminder, "TAKEN", 1);
-        PendingIntent snooze = action(context, reminder, "SNOOZE", 2);
+        PendingIntent taken = action(context, reminder, scheduledTime, "TAKEN", 1);
+        PendingIntent snooze = action(context, reminder, scheduledTime, "SNOOZE", 2);
         Intent openIntent = new Intent(context, MainActivity.class);
         PendingIntent open = PendingIntent.getActivity(context, reminder.id.hashCode(), openIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -32,13 +34,25 @@ public class AlarmReceiver extends BroadcastReceiver {
             .setVisibility(privateMode ? Notification.VISIBILITY_SECRET : Notification.VISIBILITY_PRIVATE)
             .addAction(new Notification.Action.Builder(R.drawable.ic_pill, "我已服用", taken).build())
             .addAction(new Notification.Action.Builder(R.drawable.ic_pill, "5 分钟后", snooze).build());
-        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(reminder.id.hashCode(), builder.build());
-        AlarmScheduler.schedule(context, reminder);
+        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(notificationId(reminder.id, scheduledTime), builder.build());
+        AlarmScheduler.scheduleNext(context, reminder, scheduledTime);
     }
 
-    private PendingIntent action(Context context, Reminder reminder, String action, int suffix) {
-        Intent intent = new Intent(context, ReminderActionReceiver.class).setAction(action).putExtra("reminder_id", reminder.id);
-        return PendingIntent.getBroadcast(context, reminder.id.hashCode() + suffix, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    private PendingIntent action(Context context, Reminder reminder, String scheduledTime, String action, int suffix) {
+        Intent intent = new Intent(context, ReminderActionReceiver.class).setAction(action)
+            .putExtra("reminder_id", reminder.id).putExtra("scheduled_time", scheduledTime);
+        return PendingIntent.getBroadcast(context, (reminder.id + scheduledTime).hashCode() + suffix, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    public static int notificationId(String id, String time) { return (id + "-" + time).hashCode(); }
+
+    public static void showTestNotification(Context context) {
+        createChannel(context);
+        Notification.Builder builder = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(context, CHANNEL_ID) : new Notification.Builder(context);
+        builder.setSmallIcon(R.drawable.ic_pill).setContentTitle("测试通知成功")
+            .setContentText("安卓系统可以显示吃药提醒。").setAutoCancel(true)
+            .setCategory(Notification.CATEGORY_ALARM).setVisibility(Notification.VISIBILITY_PRIVATE);
+        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(504, builder.build());
     }
 
     public static void createChannel(Context context) {

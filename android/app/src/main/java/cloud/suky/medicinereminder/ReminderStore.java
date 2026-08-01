@@ -40,11 +40,11 @@ public final class ReminderStore {
         prefs(context).edit().putString(REMINDERS, array.toString()).apply();
     }
 
-    public static void addHistory(Context context, Reminder reminder) {
+    public static void addHistory(Context context, Reminder reminder, String status, String scheduledTime) {
         try {
             JSONArray old = new JSONArray(prefs(context).getString(HISTORY, "[]"));
             JSONArray next = new JSONArray();
-            next.put(reminder.name + " · " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("M月d日 HH:mm")));
+            next.put(status + " · " + reminder.name + " · 计划 " + scheduledTime + " · " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("M月d日 HH:mm")));
             for (int i = 0; i < Math.min(old.length(), 19); i++) next.put(old.getString(i));
             prefs(context).edit().putString(HISTORY, next.toString()).apply();
         } catch (Exception ignored) { }

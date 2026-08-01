@@ -1,8 +1,8 @@
-name: Build Android v0.4
+name: Build Android
 
 on:
   push:
-    branches: ["agent/medicine-reminder-v0.4", "main"]
+    branches: ["agent/medicine-reminder-v0.4", "agent/medicine-reminder-v0.5", "main"]
     paths: ["android/**", ".github/workflows/android-debug.yml"]
   pull_request:
     paths: ["android/**", ".github/workflows/android-debug.yml"]
@@ -31,5 +31,5 @@ jobs:
         run: gradle assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: medicine-reminder-v0.4-debug
+          name: medicine-reminder-android-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
