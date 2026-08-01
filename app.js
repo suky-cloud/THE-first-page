@@ -6,8 +6,10 @@ const count = document.querySelector("#reminder-count");
 const message = document.querySelector("#form-message");
 const dialog = document.querySelector("#reminder-dialog");
 const notificationButton = document.querySelector("#notification-button");
+const installButton = document.querySelector("#install-button");
 let activeReminderId = null;
 let reminders = loadReminders();
+let deferredInstallPrompt = null;
 
 function loadReminders() {
   try {
@@ -82,6 +84,32 @@ notificationButton.addEventListener("click", async () => {
   updateNotificationButton();
 });
 
+document.querySelector("#test-button").addEventListener("click", () => {
+  showReminder({ id: null, name: "测试药品", note: "弹窗功能正常。" });
+});
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  installButton.hidden = false;
+});
+
+installButton.addEventListener("click", async () => {
+  if (!deferredInstallPrompt) {
+    message.textContent = "请在浏览器菜单中选择“安装应用”或“添加到主屏幕”。";
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installButton.hidden = true;
+});
+
+window.addEventListener("appinstalled", () => {
+  message.textContent = "安装成功，可以从手机桌面打开。";
+  installButton.hidden = true;
+});
+
 function updateNotificationButton() {
   notificationButton.textContent = "Notification" in window && Notification.permission === "granted"
     ? "系统通知已开启"
@@ -146,3 +174,11 @@ updateNotificationButton();
 checkReminders();
 setInterval(updateClock, 1000);
 setInterval(checkReminders, 10000);
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {
+      message.textContent = "离线功能暂时未能启动，在线使用不受影响。";
+    });
+  });
+}
