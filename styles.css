@@ -23,7 +23,7 @@ body {
     linear-gradient(145deg, #e3eee8 0%, var(--cream) 52%, #f2e8d8 100%);
 }
 
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button { cursor: pointer; }
 
 .app-shell { width: min(980px, calc(100% - 32px)); margin: 0 auto; padding: 52px 0 28px; }
@@ -44,9 +44,19 @@ h2 { margin: 0; font-size: 1.55rem; }
 
 form { display: grid; grid-template-columns: 1.3fr .7fr; gap: 18px; }
 label { color: var(--muted); font-size: .82rem; font-weight: 700; }
-input { width: 100%; margin-top: 8px; padding: 13px 14px; color: var(--ink); border: 1px solid var(--line); border-radius: 12px; outline: none; background: var(--white); }
-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(55,106,87,.12); }
+input, select { width: 100%; margin-top: 8px; padding: 13px 14px; color: var(--ink); border: 1px solid var(--line); border-radius: 12px; outline: none; background: var(--white); }
+input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(55,106,87,.12); }
 .wide-field { grid-column: 1 / -1; }
+.time-fieldset, .day-fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.time-fieldset legend, .day-fieldset legend { margin-bottom: 8px; color: var(--muted); font-size: .82rem; font-weight: 700; }
+.time-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.time-fields input { margin-top: 0; }
+.small-button { margin-top: 10px; padding: 6px 0; color: var(--green); border: 0; background: transparent; font-size: .8rem; font-weight: 800; }
+.day-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.day-options label { cursor: pointer; }
+.day-options input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.day-options span { display: grid; width: 40px; height: 40px; place-items: center; color: var(--muted); border: 1px solid var(--line); border-radius: 50%; background: white; }
+.day-options input:checked + span { color: white; border-color: var(--green); background: var(--green); }
 .primary-button, .secondary-button { min-height: 46px; padding: 0 22px; border-radius: 999px; font-weight: 800; }
 .primary-button { justify-self: start; color: white; border: 0; background: var(--green); box-shadow: 0 8px 18px rgba(55,106,87,.2); }
 .primary-button:hover { background: var(--green-dark); transform: translateY(-1px); }
@@ -58,14 +68,23 @@ input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(55,106,87,.
 .reminders-section { margin-top: 38px; }
 .count-pill { padding: 7px 12px; color: var(--green); border-radius: 999px; background: var(--mint); font-size: .82rem; font-weight: 800; }
 .reminder-list { display: grid; gap: 12px; }
-.reminder-item { display: grid; grid-template-columns: 88px 1fr auto auto; gap: 18px; align-items: center; padding: 18px 20px; border: 1px solid rgba(55,106,87,.12); border-radius: 18px; background: rgba(255,254,250,.72); }
-.time-badge { color: var(--green); font-size: 1.45rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.reminder-item { display: grid; grid-template-columns: minmax(110px, auto) 1fr auto auto; gap: 18px; align-items: center; padding: 18px 20px; border: 1px solid rgba(55,106,87,.12); border-radius: 18px; background: rgba(255,254,250,.72); }
+.reminder-item.disabled { opacity: .55; }
+.time-badge { color: var(--green); font-size: 1.08rem; font-weight: 800; font-variant-numeric: tabular-nums; }
 .reminder-copy h3 { margin: 0 0 4px; font-size: 1rem; }
 .reminder-copy p { margin: 0; color: var(--muted); font-size: .84rem; }
+.schedule-copy { display: block; margin-top: 5px; color: var(--green); }
 .status-badge { color: #8a6a32; font-size: .75rem; font-weight: 800; }
 .reminder-item.taken { opacity: .62; }
 .reminder-item.taken .status-badge { color: var(--green); }
 .delete-button { padding: 7px; color: var(--danger); border: 0; background: transparent; font-size: .78rem; }
+.toggle { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.toggle input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.toggle span { position: relative; width: 38px; height: 22px; border-radius: 99px; background: #c9d2cd; }
+.toggle span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: transform .2s; }
+.toggle input:checked + span { background: var(--green); }
+.toggle input:checked + span::after { transform: translateX(16px); }
+.toggle em { color: var(--muted); font-size: .72rem; font-style: normal; }
 .empty-state { padding: 44px; text-align: center; color: var(--muted); border: 1px dashed rgba(55,106,87,.28); border-radius: 20px; }
 .empty-state[hidden] { display: none; }
 .empty-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 12px; place-items: center; color: white; border-radius: 50%; background: var(--green); }
@@ -76,6 +95,15 @@ footer { margin-top: 38px; color: var(--muted); text-align: center; font-size: .
 .install-tip > span { font-size: 1.5rem; }
 .install-tip strong { font-size: .9rem; }
 .install-tip p { margin: 3px 0 0; color: var(--muted); font-size: .78rem; }
+.two-column-section { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 38px; }
+.compact-card { padding: 24px; }
+.permission-row, .history-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: .86rem; }
+.permission-row strong { color: var(--green); }
+.privacy-note, .muted-copy { color: var(--muted); font-size: .78rem; line-height: 1.6; }
+.danger-button { margin-top: 8px; padding: 8px 0; color: var(--danger); border: 0; border-bottom: 1px solid currentColor; background: transparent; font-size: .78rem; }
+.history-row span { display: grid; gap: 3px; }
+.history-row small { color: var(--muted); }
+.history-row em { color: var(--green); font-size: .76rem; font-style: normal; font-weight: 800; }
 
 dialog { width: min(440px, calc(100% - 32px)); padding: 0; border: 0; border-radius: 26px; box-shadow: 0 24px 80px rgba(18,52,40,.3); }
 dialog::backdrop { background: rgba(20,45,36,.48); backdrop-filter: blur(5px); }
@@ -93,7 +121,9 @@ dialog::backdrop { background: rgba(20,45,36,.48); backdrop-filter: blur(5px); }
   .clock { margin-top: 24px; padding: 14px 0 0; text-align: left; border-top: 1px solid rgba(55,106,87,.28); border-left: 0; }
   form { grid-template-columns: 1fr; }
   .wide-field { grid-column: auto; }
-  .reminder-item { grid-template-columns: 72px 1fr auto; gap: 12px; }
-  .status-badge { grid-column: 2; }
-  .delete-button { grid-column: 3; grid-row: 1 / span 2; }
+  .time-fields, .two-column-section { grid-template-columns: 1fr; }
+  .reminder-item { grid-template-columns: 1fr auto; gap: 12px; }
+  .time-badge { grid-column: 1 / -1; }
+  .toggle { grid-column: 2; grid-row: 2; }
+  .delete-button { grid-column: 2; grid-row: 3; justify-self: end; }
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "medicine-reminder-v0.2";
+const CACHE_NAME = "medicine-reminder-v0.3";
 const APP_FILES = [
   "./",
   "./index.html",
