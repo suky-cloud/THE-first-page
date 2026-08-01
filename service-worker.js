@@ -1,4 +1,4 @@
-const CACHE_NAME = "medicine-reminder-v0.4-mobile-days";
+const CACHE_NAME = "medicine-reminder-v0.5-download";
 const APP_FILES = [
   "./",
   "./index.html",
