@@ -1,11 +1,12 @@
-const CACHE_NAME = "medicine-reminder-v0.3";
+const CACHE_NAME = "medicine-reminder-v0.4-qr";
 const APP_FILES = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "./android-download-qr.svg"
 ];
 
 self.addEventListener("install", (event) => {
