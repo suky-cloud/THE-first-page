@@ -3,6 +3,7 @@ plugins { id "com.android.application" }
 android {
     namespace "cloud.suky.medicinereminder"
     compileSdk 35
+    buildFeatures { buildConfig true }
 
     defaultConfig {
         applicationId "cloud.suky.medicinereminder"
