@@ -36,8 +36,18 @@ public final class AlarmScheduler {
     private static void scheduleTime(Context context, Reminder reminder, String time, long triggerAt) {
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent operation = alarmIntent(context, reminder.id, time);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !manager.canScheduleExactAlarms()) manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, operation);
-        else manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, operation);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && manager.canScheduleExactAlarms()) {
+            // Alarm-clock alarms are user-visible and are designed to wake the device
+            // from Doze/lock screen more reliably than a regular exact alarm.
+            Intent showIntent = new Intent(context, MainActivity.class);
+            PendingIntent show = PendingIntent.getActivity(context, (reminder.id + "-show").hashCode(), showIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            manager.setAlarmClock(new AlarmManager.AlarmClockInfo(triggerAt, show), operation);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, operation);
+        } else {
+            manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, operation);
+        }
     }
 
     private static PendingIntent alarmIntent(Context context, String id, String time) {

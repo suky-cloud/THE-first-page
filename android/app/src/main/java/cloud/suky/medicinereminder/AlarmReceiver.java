@@ -10,7 +10,9 @@ import android.content.Intent;
 import android.os.Build;
 
 public class AlarmReceiver extends BroadcastReceiver {
-    public static final String CHANNEL_ID = "medicine_reminders";
+    // A new channel is intentional: Android lets users control an existing channel,
+    // but the app cannot raise its importance/lock-screen visibility afterward.
+    public static final String CHANNEL_ID = "medicine_reminders_v051";
 
     @Override public void onReceive(Context context, Intent intent) {
         String id = intent.getStringExtra("reminder_id");
@@ -31,7 +33,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             .setContentTitle(privateMode ? "到服药时间了" : "该服用 " + reminder.name + " 了")
             .setContentText(privateMode ? "请打开应用查看详情" : (reminder.note.isEmpty() ? "请按计划服药" : reminder.note))
             .setContentIntent(open).setAutoCancel(true).setCategory(Notification.CATEGORY_ALARM)
-            .setVisibility(privateMode ? Notification.VISIBILITY_SECRET : Notification.VISIBILITY_PRIVATE)
+            // PRIVATE keeps a generic notification visible on the lock screen while
+            // allowing Android/Honor to redact the detailed text when required.
+            .setVisibility(Notification.VISIBILITY_PRIVATE)
             .addAction(new Notification.Action.Builder(R.drawable.ic_pill, "我已服用", taken).build())
             .addAction(new Notification.Action.Builder(R.drawable.ic_pill, "5 分钟后", snooze).build());
         ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(notificationId(reminder.id, scheduledTime), builder.build());
