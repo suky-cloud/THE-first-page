@@ -2,7 +2,7 @@ name: Build Android
 
 on:
   push:
-    branches: ["agent/medicine-reminder-v0.4", "agent/medicine-reminder-v0.5", "main"]
+    branches: ["agent/medicine-reminder-v0.4", "agent/medicine-reminder-v0.5", "agent/medicine-reminder-v0.5.1", "main"]
     paths: ["android/**", ".github/workflows/android-debug.yml"]
   pull_request:
     paths: ["android/**", ".github/workflows/android-debug.yml"]
