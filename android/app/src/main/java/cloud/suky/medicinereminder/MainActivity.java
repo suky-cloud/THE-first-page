@@ -73,10 +73,22 @@ public class MainActivity extends Activity {
         LinearLayout nextCard = card(); nextCard.addView(nextReminderText); root.addView(nextCard, marginBottom(16));
         root.addView(buildPermissionCard(), marginBottom(16));
         root.addView(buildAddCard(), marginBottom(24));
+        root.addView(buildAboutCard(), marginBottom(24));
         root.addView(sectionTitle("服药计划")); reminderContainer = column(); root.addView(reminderContainer, marginBottom(24));
         root.addView(sectionTitle("最近操作记录")); historyContainer = column(); root.addView(historyContainer);
         root.addView(label("数据仅保存在当前手机内部 · 不能替代医生建议", 12, MUTED, false), marginTop(28));
         return scroll;
+    }
+
+    private View buildAboutCard() {
+        LinearLayout card = card();
+        card.addView(label("关于应用", 19, INK, true), marginBottom(6));
+        card.addView(label("当前版本：v" + BuildConfig.VERSION_NAME, 14, MUTED, false), marginBottom(10));
+        Button updates = button("检查更新", false);
+        updates.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+            Uri.parse("https://github.com/suky-cloud/THE-first-page/releases"))));
+        card.addView(updates);
+        return card;
     }
 
     private View buildPermissionCard() {
