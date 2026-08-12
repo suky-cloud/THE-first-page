@@ -48,6 +48,8 @@ public class MainActivity extends Activity {
     private Button saveButton;
     private Button cancelEditButton;
     private String editingId;
+    private LinearLayout reminderPage;
+    private LinearLayout settingsPage;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -71,13 +73,35 @@ public class MainActivity extends Activity {
         root.addView(label("可靠提醒测试版 · 多时间、可编辑、可诊断", 14, MUTED, false), marginBottom(20));
         nextReminderText = label("下一次提醒：尚未设置", 15, GREEN, true);
         LinearLayout nextCard = card(); nextCard.addView(nextReminderText); root.addView(nextCard, marginBottom(16));
-        root.addView(buildPermissionCard(), marginBottom(16));
-        root.addView(buildAddCard(), marginBottom(24));
-        root.addView(buildAboutCard(), marginBottom(24));
-        root.addView(sectionTitle("服药计划")); reminderContainer = column(); root.addView(reminderContainer, marginBottom(24));
-        root.addView(sectionTitle("最近操作记录")); historyContainer = column(); root.addView(historyContainer);
-        root.addView(label("数据仅保存在当前手机内部 · 不能替代医生建议", 12, MUTED, false), marginTop(28));
+        LinearLayout tabs = row();
+        Button remindersTab = button("提醒计划", true);
+        Button settingsTab = button("设置与隐私", false);
+        tabs.addView(remindersTab, weighted()); tabs.addView(settingsTab, weightedWithLeftMargin());
+        root.addView(tabs, marginBottom(16));
+
+        reminderPage = column();
+        reminderPage.addView(buildAddCard(), marginBottom(24));
+        reminderPage.addView(sectionTitle("服药计划")); reminderContainer = column(); reminderPage.addView(reminderContainer, marginBottom(24));
+        root.addView(reminderPage);
+
+        settingsPage = column(); settingsPage.setVisibility(View.GONE);
+        settingsPage.addView(buildPermissionCard(), marginBottom(16));
+        settingsPage.addView(buildAboutCard(), marginBottom(24));
+        settingsPage.addView(sectionTitle("最近操作记录")); historyContainer = column(); settingsPage.addView(historyContainer);
+        settingsPage.addView(label("数据仅保存在当前手机内部 · 不能替代医生建议", 12, MUTED, false), marginTop(28));
+        root.addView(settingsPage);
+        remindersTab.setOnClickListener(v -> switchPage(true, remindersTab, settingsTab));
+        settingsTab.setOnClickListener(v -> switchPage(false, remindersTab, settingsTab));
         return scroll;
+    }
+
+    private void switchPage(boolean reminders, Button remindersTab, Button settingsTab) {
+        reminderPage.setVisibility(reminders ? View.VISIBLE : View.GONE);
+        settingsPage.setVisibility(reminders ? View.GONE : View.VISIBLE);
+        remindersTab.setBackgroundTintList(ColorStateList.valueOf(reminders ? GREEN : Color.rgb(220,236,228)));
+        remindersTab.setTextColor(reminders ? Color.WHITE : GREEN);
+        settingsTab.setBackgroundTintList(ColorStateList.valueOf(reminders ? Color.rgb(220,236,228) : GREEN));
+        settingsTab.setTextColor(reminders ? GREEN : Color.WHITE);
     }
 
     private View buildAboutCard() {
